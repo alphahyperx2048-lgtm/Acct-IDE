@@ -2,9 +2,8 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Wallet, Plus, History, ArrowDownLeft, ArrowUpRight, Calendar, User, 
-  Save, Search, Info, RefreshCw, Shuffle, Calculator, DollarSign, 
-  Landmark, Percent, UserPlus, CheckCircle2
+  Wallet, ArrowDownLeft, ArrowUpRight, Calendar, User, 
+  Save, DollarSign, Landmark, Percent
 } from 'lucide-react';
 import { useAccounting } from '../context/AccountingContext';
 import { CashBookEntry, Account } from '../types';
@@ -12,7 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 import AccountRegisterModal from './AccountRegisterModal';
 
 const CashBookView: React.FC = () => {
-  const { cashBookEntries, addCashBookEntry, accounts, balanceCashBook, createAccount, getAccountByName } = useAccounting();
+  const { cashBookEntries, addCashBookEntry, accounts, getAccountByName } = useAccounting();
   
   const [viewMode, setViewMode] = useState<'NEW' | 'REGISTER'>('NEW');
   const [txnType, setTxnType] = useState<'RECEIPT' | 'PAYMENT'>('RECEIPT');
@@ -34,6 +33,7 @@ const CashBookView: React.FC = () => {
   }, [accountQuery, accounts]);
 
   const validateAndSet = (val: string, setter: (n: number) => void) => {
+    // Regex allows digits and at most one dot
     const filtered = val.replace(/[^0-9.]/g, '');
     setter(filtered === '' ? 0 : parseFloat(filtered));
   };

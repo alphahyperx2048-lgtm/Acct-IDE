@@ -5,12 +5,12 @@ import {
   Download, Save, Info, Calculator, Sparkles, 
   UserPlus, Hash, Scissors, BookOpen, CheckCircle2, AlertCircle, ShieldAlert
 } from 'lucide-react';
-import { JournalEntry, JournalLine, ViewMode, Account, AccountType, AccountClassification } from '../types';
+import { JournalEntry, JournalLine, ViewMode, Account, AccountType, AccountClassification } from './types';
 import { v4 as uuidv4 } from 'uuid';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAccounting } from '../context/AccountingContext';
-import AccountProfileModal from './AccountProfileModal';
-import AccountRegisterModal from './AccountRegisterModal';
+import { useAccounting } from './context/AccountingContext';
+import AccountProfileModal from './components/AccountProfileModal';
+import AccountRegisterModal from './components/AccountRegisterModal';
 
 function useHistory<T>(initialState: T) {
   const [history, setHistory] = useState<T[]>([initialState]);
@@ -40,7 +40,8 @@ function useHistory<T>(initialState: T) {
 const JournalIDE: React.FC<{ setView?: (view: ViewMode) => void }> = ({ setView }) => {
   const { accounts, addEntry, getAccountByName, getAccountBalance } = useAccounting();
   
-  const initialState = {
+  // Explicitly type initialState to ensure lines are JournalLine[]
+  const initialState: { lines: JournalLine[], narration: string } = {
     lines: [
       { id: uuidv4(), type: 'DEBIT', accountId: '', accountName: '', code: '', amount: 0 },
       { id: uuidv4(), type: 'CREDIT', accountId: '', accountName: '', code: '', amount: 0 },
@@ -95,13 +96,14 @@ const JournalIDE: React.FC<{ setView?: (view: ViewMode) => void }> = ({ setView 
 
   const updateLine = (id: string, field: keyof JournalLine, value: any) => {
     const newLines = currentLines.map(line => line.id === id ? { ...line, [field]: value } : line);
-    setWorkingState({ ...workingState, lines: newLines as any });
+    // Cast newLines to JournalLine[] to resolve type inference issues where [field]: value may be inferred too loosely
+    setWorkingState({ ...workingState, lines: newLines as JournalLine[] });
     if (field === 'accountName') { setSuggestionQuery(String(value)); setShowSuggestions(true); setActiveLineId(id); }
   };
 
   const handleSelectAccount = (lineId: string, acc: Account) => {
     const newLines = currentLines.map(line => line.id === lineId ? { ...line, accountName: acc.name, accountId: acc.id, code: acc.code } : line);
-    setWorkingState({ ...workingState, lines: newLines as any });
+    setWorkingState({ ...workingState, lines: newLines as JournalLine[] });
     setShowSuggestions(false);
     setActiveLineId(null);
   };

@@ -42,7 +42,8 @@ const SubsidiaryBooksView: React.FC = () => {
 
   const [activeBook, setActiveBook] = useState<SubsidiaryBookType>('PURCHASE');
   const [viewMode, setViewMode] = useState<'ENTRY' | 'REGISTER'>('ENTRY');
-  const [stockError, setStockError] = useState<{ isOpen: boolean; item: string; available: number; requested: number }>({ isOpen: false, item: '', available: 0, requested: 0 });
+  // Fixed state property name 'item' to 'itemName' to match StockErrorModal props
+  const [stockError, setStockError] = useState<{ isOpen: boolean; itemName: string; available: number; requested: number }>({ isOpen: false, itemName: '', available: 0, requested: 0 });
   
   const [partyName, setPartyName] = useState('');
   const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split('T')[0]);
@@ -135,7 +136,8 @@ const SubsidiaryBooksView: React.FC = () => {
         if (invItem) {
           const liveStock = getCurrentStockBalance(invItem.id);
           if (item.quantity > liveStock) {
-            setStockError({ isOpen: true, item: invItem.name, available: liveStock, requested: item.quantity });
+            // Fixed property name from 'item' to 'itemName'
+            setStockError({ isOpen: true, itemName: invItem.name, available: liveStock, requested: item.quantity });
             return;
           }
         }

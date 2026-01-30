@@ -39,7 +39,8 @@ function useHistory<T>(initialState: T) {
 const JournalIDE: React.FC<{ setView?: (view: ViewMode) => void }> = ({ setView }) => {
   const { accounts, addEntry, getAccountByName, getAccountBalance } = useAccounting();
   
-  const initialState = {
+  // Explicitly type initialState to ensure lines are JournalLine[]
+  const initialState: { lines: JournalLine[], narration: string } = {
     lines: [
       { id: uuidv4(), type: 'DEBIT', accountId: '', accountName: '', code: '', amount: 0 },
       { id: uuidv4(), type: 'CREDIT', accountId: '', accountName: '', code: '', amount: 0 },
@@ -80,13 +81,14 @@ const JournalIDE: React.FC<{ setView?: (view: ViewMode) => void }> = ({ setView 
 
   const updateLine = (id: string, field: keyof JournalLine, value: any) => {
     const newLines = currentLines.map(line => line.id === id ? { ...line, [field]: value } : line);
-    setWorkingState({ ...workingState, lines: newLines as any });
+    // Cast newLines to JournalLine[] to resolve type inference issues where [field]: value may be inferred too loosely
+    setWorkingState({ ...workingState, lines: newLines as JournalLine[] });
     if (field === 'accountName') { setSuggestionQuery(String(value)); setShowSuggestions(true); setActiveLineId(id); }
   };
 
   const handleSelectAccount = (lineId: string, acc: Account) => {
     const newLines = currentLines.map(line => line.id === lineId ? { ...line, accountName: acc.name, accountId: acc.id, code: acc.code } : line);
-    setWorkingState({ ...workingState, lines: newLines as any });
+    setWorkingState({ ...workingState, lines: newLines as JournalLine[] });
     setShowSuggestions(false);
     setActiveLineId(null);
   };

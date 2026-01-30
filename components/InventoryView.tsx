@@ -201,7 +201,7 @@ const InventoryView: React.FC = () => {
                 </div>
               );
             })}
-          </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

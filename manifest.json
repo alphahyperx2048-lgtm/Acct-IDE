@@ -1,0 +1,21 @@
+{
+  "name": "ACCT-IDE",
+  "short_name": "ACCT-IDE",
+  "description": "The Premium Accounting Practice & Intelligence Engine",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050b14",
+  "theme_color": "#00f3ff",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/10095/10095368.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/10095/10095368.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

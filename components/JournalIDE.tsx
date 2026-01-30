@@ -154,7 +154,6 @@ const JournalIDE: React.FC<{ setView?: (view: ViewMode) => void }> = ({ setView 
   };
 
   const getContextualMapping = (line: JournalLine) => {
-    const isDr = line.type === 'DEBIT';
     const otherLines = currentLines.filter(l => l.id !== line.id);
     const hasPurchase = otherLines.some(l => l.accountName.toLowerCase().includes('purchase'));
     const hasSales = otherLines.some(l => l.accountName.toLowerCase().includes('sales'));
@@ -164,6 +163,7 @@ const JournalIDE: React.FC<{ setView?: (view: ViewMode) => void }> = ({ setView 
     let suggestedType: AccountType = 'ASSET';
     let suggestedClass: AccountClassification = 'CURRENT_ASSET';
 
+    // Intelligent mapping for debtors/creditors based on context
     if (hasPurchase || hasSR) {
       suggestedType = 'LIABILITY';
       suggestedClass = 'SUNDRY_CREDITOR';

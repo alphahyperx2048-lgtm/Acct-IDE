@@ -37,6 +37,11 @@ const CashBookView: React.FC = () => {
 
   const totalTxnValue = cashAmount + bankAmount + discountAmount;
 
+  const validateAndSet = (val: string, setter: (n: number) => void) => {
+    const filtered = val.replace(/[^0-9.]/g, '');
+    setter(filtered === '' ? 0 : parseFloat(filtered));
+  };
+
   const handlePost = () => {
     if (!selectedAcc && !isContra) {
       const existing = getAccountByName(accountQuery);
@@ -182,15 +187,15 @@ const CashBookView: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
               <div className="bg-slate-900/50 p-6 rounded-3xl border border-glass-border group hover:border-emerald-500/50 transition-all">
                 <div className="flex items-center gap-2 text-emerald-400 mb-4"><DollarSign size={16}/> <span className="text-[10px] font-black uppercase tracking-widest">CASH</span></div>
-                <input type="number" value={cashAmount || ''} onChange={e => setCashAmount(Number(e.target.value))} className="w-full bg-transparent border-b border-gray-800 text-3xl font-mono font-black text-white outline-none focus:border-emerald-400" placeholder="0.00" />
+                <input type="text" value={cashAmount || ''} onChange={e => validateAndSet(e.target.value, setCashAmount)} className="w-full bg-transparent border-b border-gray-800 text-3xl font-mono font-black text-white outline-none focus:border-emerald-400" placeholder="0.00" />
               </div>
               <div className="bg-slate-900/50 p-6 rounded-3xl border border-glass-border group hover:border-cyan-500/50 transition-all">
                 <div className="flex items-center gap-2 text-cyan-400 mb-4"><Landmark size={16}/> <span className="text-[10px] font-black uppercase tracking-widest">BANK</span></div>
-                <input type="number" value={bankAmount || ''} onChange={e => setBankAmount(Number(e.target.value))} className="w-full bg-transparent border-b border-gray-800 text-3xl font-mono font-black text-white outline-none focus:border-cyan-400" placeholder="0.00" />
+                <input type="text" value={bankAmount || ''} onChange={e => validateAndSet(e.target.value, setBankAmount)} className="w-full bg-transparent border-b border-gray-800 text-3xl font-mono font-black text-white outline-none focus:border-cyan-400" placeholder="0.00" />
               </div>
               <div className="bg-slate-900/50 p-6 rounded-3xl border border-glass-border group hover:border-pink-500/50 transition-all">
                 <div className="flex items-center gap-2 text-pink-400 mb-4"><Percent size={16}/> <span className="text-[10px] font-black uppercase tracking-widest">DISCOUNT</span></div>
-                <input type="number" value={discountAmount || ''} onChange={e => setDiscountAmount(Number(e.target.value))} className="w-full bg-transparent border-b border-gray-800 text-3xl font-mono font-black text-white outline-none focus:border-pink-400" placeholder="0.00" />
+                <input type="text" value={discountAmount || ''} onChange={e => validateAndSet(e.target.value, setDiscountAmount)} className="w-full bg-transparent border-b border-gray-800 text-3xl font-mono font-black text-white outline-none focus:border-pink-400" placeholder="0.00" />
               </div>
             </div>
 

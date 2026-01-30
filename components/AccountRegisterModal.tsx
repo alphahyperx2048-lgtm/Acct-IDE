@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, ShieldCheck, UserPlus, Users, ArrowRightLeft, 
@@ -15,6 +15,8 @@ interface AccountRegisterModalProps {
   onClose: () => void;
   accountName: string;
   onSuccess: (acc: Account) => void;
+  suggestedType?: AccountType;
+  suggestedClass?: AccountClassification;
 }
 
 const TYPE_CONFIG: Record<AccountType, { label: string; color: string; activeColor: string }> = {
@@ -54,10 +56,17 @@ const CLASSIFICATION_MAP: Record<AccountType, { id: AccountClassification; label
   ],
 };
 
-const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ isOpen, onClose, accountName, onSuccess }) => {
+const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ isOpen, onClose, accountName, onSuccess, suggestedType, suggestedClass }) => {
   const { createAccount } = useAccounting();
   const [selectedType, setSelectedType] = useState<AccountType>('ASSET');
   const [classification, setClassification] = useState<AccountClassification | undefined>(undefined);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (suggestedType) setSelectedType(suggestedType);
+      if (suggestedClass) setClassification(suggestedClass);
+    }
+  }, [isOpen, suggestedType, suggestedClass]);
 
   const handleRegister = () => {
     if (!classification) return;
@@ -84,7 +93,6 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ isOpen, onC
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         className="relative w-full max-w-xl bg-[#0F172A] border border-glass-border rounded-[32px] shadow-[0_0_80px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col"
       >
-        {/* Header */}
         <div className="p-8 pb-4 flex items-center justify-between">
            <div className="flex items-center gap-4">
              <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
@@ -98,8 +106,6 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ isOpen, onC
         </div>
 
         <div className="p-8 space-y-10 overflow-y-auto custom-scrollbar">
-          
-          {/* Step 1: Account Type */}
           <div>
             <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 block">1. ACCOUNT TYPE</label>
             <div className="grid grid-cols-5 gap-2">
@@ -113,7 +119,7 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ isOpen, onC
                       py-3 rounded-xl border font-black text-[10px] transition-all tracking-widest uppercase
                       ${isActive 
                         ? `${TYPE_CONFIG[type].activeColor} bg-white/[0.05] ring-2 ring-current ring-opacity-10 shadow-lg` 
-                        : `${TYPE_CONFIG[type].color} hover:border-gray-700 hover:text-gray-400`}
+                        : `${TYPE_CONFIG[type].color} hover:border-gray-800 hover:text-gray-400`}
                     `}
                   >
                     {TYPE_CONFIG[type].label}
@@ -123,7 +129,6 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ isOpen, onC
             </div>
           </div>
 
-          {/* Step 2: Classification Grid */}
           <div>
             <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 block">2. MAPPING CLASSIFICATION</label>
             <div className="grid grid-cols-2 gap-4">
@@ -159,10 +164,8 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ isOpen, onC
               })}
             </div>
           </div>
-
         </div>
 
-        {/* Footer */}
         <div className="p-8 pt-4">
           <button 
             disabled={!classification}
